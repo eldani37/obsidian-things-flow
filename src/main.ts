@@ -287,7 +287,7 @@ export default class ThingsPlugin extends Plugin {
 			'Convert to Things project', 
 			fn);
 		
-		this.registerObsidianProtocolHandler('sync-things', async (input) => {// for syncing from things3 to obsidian using the things3 shortcut and obsidian url
+		this.registerObsidianProtocolHandler('things-flow', async (input) => {// for syncing from things3 to obsidian using the things3 shortcut and obsidian url
 			const projects: Array<Project> = JSON.parse(input['data']!) as Array<Project>;
 			for (const proj of projects) {
 				const match = proj.notes.match(/^obsidian:\/\/open\?\S*/)?.[0];
