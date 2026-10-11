@@ -33,7 +33,7 @@ Note that ignoring a subtask does not necessarily ignore its own subtasks, becau
 - **Change task status after copying to Things:** This will mark the tasks being synced to Things with the specified status.
 - **Open corresponding notes after syncing:** When enabled, opens the Obsidian notes associated with the projects being synced. Disable this option to sync in the background.
 
-### Limitations
+## Limitations
 - **Limited parsing:** Currently only task status are synced. Other metadata, like tags and dates, is treated as part of the task name.
 - **Limited heading preservation:** Things headings do not support hierarchical structure, so not all headings will be preserved. See the [table](#how-it-works) above for details.
 - **No duplicate detection:** Running the conversion multiple times may create duplicate projects in Things.
