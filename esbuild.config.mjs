@@ -37,7 +37,7 @@ const context = await esbuild.context({
 	logLevel: 'info',
 	sourcemap: prod ? false : 'inline',
 	treeShaking: true,
-	outfile: 'main.js',
+	outfile: prod?'main.js':'/mnt/d/documents-new/test-vault/.obsidian/plugins/obsidian-things-flow/main.js',
 	minify: prod,
 });
 
