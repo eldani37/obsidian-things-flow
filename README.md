@@ -7,6 +7,7 @@ Things Flow is a plugin for 2-way task syncing between Obsidian and Things 3, ru
 | Obsidian | Things |
 |---|---|
 | Note | Project |
+|Note's Obsidian URL |Project notes|
 | To-do's deepest enclosing heading	|Heading |
 |Headings with no to-dos directly under them| Omitted|
 | Top-level task | To-do |
@@ -18,7 +19,17 @@ Things Flow is a plugin for 2-way task syncing between Obsidian and Things 3, ru
 To sync to Things, use the command or ribbon action.
 
 To sync from Things, select plugin-generated projects in Things and run this [Apple Shortcut](https://www.icloud.com/shortcuts/8daa158808b34d3c8823b472f2262150). Recommend reviewing the shortcut before using it.
+## Important notes
+### Updating a Things project
+Currently, each conversion creates a new Things project rather than updating an existing one. To update a project, convert the note again and then delete the old project. Support for updating existing projects is planned (see [Roadmap](#roadmap)).
+### Keep the Obsidian URL valid
+You can rename the generated project or edit its notes, as long as the Obsidian URL in the notes remains valid and points to the source note. This URL is used to identify the note when syncing task statuses back to Obsidian.
 
+If the URL becomes invalid or points to the wrong note (e.g., after renaming the source note), recreate the project or manually update its notes with a valid Obsidian URL.
+
+The [full path setting](#identification) determines which path format is used in Obsidian URLs. Short paths may point to the wrong note if another note reuses the same name, while full paths need to be updated if you move a note to a different folder.
+### macOS support
+Things Flow is designed to work on both iOS and macOS, but it has been extensively tested only on iOS. If you encounter any issues on macOS, please let me know.
 ## Configuration
 
 You can configure the plugin in Settings. 
@@ -39,3 +50,5 @@ Note that ignoring a subtask does not necessarily ignore its own subtasks, becau
 - **Limited heading preservation:** Things headings do not support hierarchical structure, so not all headings will be preserved. See the [table](#how-it-works) above for details.
 - **No duplicate detection:** Running the conversion multiple times may create duplicate projects in Things.
 - **Text-based matching:** The plugin does not store Things IDs, so tasks are matched using text rather than unique identifiers. This means tasks sharing the same name and deepest heading (even if their higher level headings differ), or tasks whose names change after syncing, may result in unexpected or missed status updates. To-dos are matched by title and deepest heading, while checklist items are matched by item name, to-do title, and deepest heading.
+## Roadmap
+- [ ] Support updating existing Things projects when converting a note, rather than creating a new project each time.
