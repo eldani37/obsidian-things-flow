@@ -251,7 +251,7 @@ export default class ThingsPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		this.addSettingTab(new ThingsSettingTab(this.app, this));
-		const fn = async () => {
+		const outFn = async () => {
 			const file = this.app.workspace.getActiveFile();
 			if (!file || file.extension !== 'md') {
 				new Notice('Please select a note to convert first.');
@@ -259,33 +259,29 @@ export default class ThingsPlugin extends Plugin {
 			}
 			const vaultName = this.app.vault.getName();
 			const fileName = file.basename;
-			const path = file.path;
-			let url: string | undefined;
+			const path = this.settings.fullPath ? file.path : this.app.metadataCache.fileToLinktext(file,'');
 			
 			await this.app.vault.process(file, (content) => {
 				const result = processTasks(content, this.settings.ignoreStatus, {mode: 'out', toStatus: this.settings.toStatus, vaultName, fileName, path});
-				url = result.url;
-				if (url){
-					window.open(url);
+				if (result.url){
+					window.open(result.url);
 					return result.newContent;
 				} else {
 					return content;
 				}
 			})
-			
 		}
-
+		
 		this.addCommand({
 			id: 'tasks-to-things',
 			name: 'Convert to Things project',
 			icon: 'external-link',
-			callback: fn,
+			callback: outFn,
 		});
-		
 		this.addRibbonIcon(
 			'external-link', 
 			'Convert to Things project', 
-			fn);
+			outFn);
 		
 		this.registerObsidianProtocolHandler('things-flow', async (input) => {// for syncing from things3 to obsidian using the things3 shortcut and obsidian url
 			const projects: Array<Project> = JSON.parse(input['data']!) as Array<Project>;
@@ -306,7 +302,7 @@ export default class ThingsPlugin extends Plugin {
 					new Notice(`File path not found in URL: ${proj.notes}`);
 					continue;
 				}
-				const file = this.app.vault.getFileByPath(normalizePath(path));
+				const file = this.app.metadataCache.getFirstLinkpathDest(normalizePath(path), '');
 				if (!file) {
 					new Notice(`File not found: ${vaultName}/${path}`);
 					continue;

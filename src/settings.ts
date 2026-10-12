@@ -7,6 +7,7 @@ export interface ThingsPluginSettings {
 	onlyMode: boolean;
 	onlyStatus: string;
 	openNotes: boolean;
+	fullPath: boolean;
 }
 
 export const DEFAULT_SETTINGS: Partial<ThingsPluginSettings> = {
@@ -15,6 +16,7 @@ export const DEFAULT_SETTINGS: Partial<ThingsPluginSettings> = {
 	onlyMode: false,
 	onlyStatus: '',
 	openNotes: true,
+	fullPath: false,
 };
 
 export class ThingsSettingTab extends PluginSettingTab {
@@ -51,7 +53,14 @@ export class ThingsSettingTab extends PluginSettingTab {
 							placeholder: '',
 							validate: (value: string) => (value.length > 1)? 'Please enter a single status symbol.': undefined,
 						},
-					},
+					},{
+						name: 'Always use full paths in Obsidian URLs in Things notes',
+						desc: 'If enabled, Obsidian URLs will use the note\'s full path. Otherwise, the file basename will be used when it is unique. This setting may be overridden by the Path from the vault folder / current file option under New link format in Obsidian\'s Files and links settings.',
+						control: {
+							type: 'toggle' as const,
+							key: 'fullPath',
+						},
+					}
 				],
 			},{
 				type: 'group' as const,
