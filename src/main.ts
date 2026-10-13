@@ -275,7 +275,7 @@ export default class ThingsPlugin extends Plugin {
 				default:
 					candidates = [];
 			}
-			const area: string | undefined = this.settings.areaNames.toLocaleLowerCase().split(';').find((areaName)=>candidates.some((source) => source.includes(areaName)));
+			const area: string | undefined = this.settings.areaNames.split(';').find((areaName)=>candidates.some((source) => source.toLowerCase().includes(areaName.toLowerCase())));
 			await this.app.vault.process(file, (content) => {
 				const result = processTasks(content, this.settings.ignoreStatus, {mode: 'out', toStatus: this.settings.toStatus, vaultName, fileName, path, area});
 				if (result.url){
