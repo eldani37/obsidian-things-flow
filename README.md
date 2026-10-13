@@ -1,6 +1,6 @@
-# Thing Flow: An Obsidian Plugin
+# Things Flow
 
-Things Flow is a plugin for 2-way task syncing between Obsidian and Things 3, running on both iOS and macOS. It can create a Things project with to-dos and headings based on the tasks and headings in an Obsidian note. It can also sync task statuses back to Obsidian using an Apple Shortcut.
+Things Flow is an Obsidian plugin for 2-way task syncing between Obsidian and Things 3, running on both iOS and macOS. It can create a Things project with to-dos and headings based on the tasks and headings in an Obsidian note. It can also sync task statuses back to Obsidian using an Apple Shortcut.
 
 ## How it works
 
