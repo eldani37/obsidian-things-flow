@@ -8,6 +8,7 @@ Things Flow is an Obsidian plugin for 2-way task syncing between Obsidian and Th
 |---|---|
 | Note | Project |
 |Note's Obsidian URL |Project notes|
+| Matching area name found in the metadata|Project area|
 | To-do's deepest enclosing heading	|Heading |
 |Headings with no to-dos directly under them| Omitted|
 | Top-level task | To-do |
@@ -29,7 +30,7 @@ If the URL becomes invalid or points to the wrong note (e.g., after renaming the
 
 The [full path setting](#identification) determines which path format is used in Obsidian URLs. Short paths may point to the wrong note if another note reuses the same name, while full paths need to be updated if you move a note to a different folder.
 ### macOS support
-Things Flow is designed to work on both iOS and macOS, but it has been extensively tested only on iOS. If you encounter any issues on macOS, please let me know.
+Things Flow is designed to work on both iOS and macOS, but it has been tested only on iOS. If you encounter any issues on macOS, please let me know.
 ## Configuration
 
 You can configure the plugin in Settings. 
@@ -45,6 +46,8 @@ Note that ignoring a subtask does not necessarily ignore its own subtasks, becau
 - **Open corresponding notes after syncing:** When enabled, opens the Obsidian notes associated with the projects being synced. Disable this option to sync in the background.
 ### Identification
 - **Always use full paths in Obsidian URLs in Things notes:** Keep this disabled for convenience when moving notes between folders, if you don't expect to reuse note names. Otherwise enable it to avoid linking to the wrong note.
+- **Where to look for Things area names:** You can choose tags, the file's full path, or backlinks as the source.
+- **Things area names to look for:** Matching is case-insensitive, but be careful with spaces around semicolon separators, as they can affect matching.
 ## Limitations
 - **Limited parsing:** Currently only task status are synced. Other metadata, like tags and dates, is treated as part of the task name.
 - **Limited heading preservation:** Things headings do not support hierarchical structure, so not all headings will be preserved. See the [table](#how-it-works) above for details.

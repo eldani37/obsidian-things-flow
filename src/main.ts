@@ -47,6 +47,7 @@ type project = {
 		notes?: string;
 		when?: string;
 		deadlines?: string
+		area?: string;
 		completed?: boolean;
 		canceled?: boolean;
 		items: Array<todo|heading>;
@@ -75,6 +76,7 @@ type fParams = {
 	vaultName: string;
 	fileName: string;
 	path: string;
+	area?: string;
 }|{
 	mode: 'in';
 	onlyMode: boolean;
@@ -141,9 +143,7 @@ function processTasks(content: string, ignoreStatus: string, params: fParams): {
 				// in: update the status; out: add to the latest todo and change the status if needed
 				if (params.mode === 'out') {
 					// if not having already a checklist, create one for the latest todo
-					if (latest.attributes?.['checklist-items'] === undefined) {
-						latest.attributes['checklist-items'] = [];
-					}
+					latest.attributes['checklist-items'] ??= [];
 					latest.attributes['checklist-items'].push({
 						type: 'checklist-item',
 						attributes: {
@@ -232,6 +232,7 @@ function processTasks(content: string, ignoreStatus: string, params: fParams): {
 			attributes: {
 				title: params.fileName,
 				notes: `obsidian://open?${new URLSearchParams([['vault',params.vaultName],['file',params.path]]).toString().replaceAll('+','%20')}`,// to directly open the obsidian note
+				area: params.area,
 				items: output,
 			}
 		};
@@ -260,9 +261,23 @@ export default class ThingsPlugin extends Plugin {
 			const vaultName = this.app.vault.getName();
 			const fileName = file.basename;
 			const path = this.settings.fullPath ? file.path : this.app.metadataCache.fileToLinktext(file,'');
-			
+			let candidates: string[];
+			switch (this.settings.areaLoc) {
+				case 'backlinks':
+					candidates = Object.entries(this.app.metadataCache.resolvedLinks).filter(([_, dest]) => file.path in dest).map(([source, _]) => source);
+					break;
+				case 'tags':
+					candidates = this.app.metadataCache.getFileCache(file)?.tags?.map((tag) => tag.tag) ?? [];
+					break;
+				case 'path':
+					candidates = [file.path];
+					break;
+				default:
+					candidates = [];
+			}
+			const area: string | undefined = this.settings.areaNames.toLocaleLowerCase().split(';').find((areaName)=>candidates.some((source) => source.includes(areaName)));
 			await this.app.vault.process(file, (content) => {
-				const result = processTasks(content, this.settings.ignoreStatus, {mode: 'out', toStatus: this.settings.toStatus, vaultName, fileName, path});
+				const result = processTasks(content, this.settings.ignoreStatus, {mode: 'out', toStatus: this.settings.toStatus, vaultName, fileName, path, area});
 				if (result.url){
 					window.open(result.url);
 					return result.newContent;

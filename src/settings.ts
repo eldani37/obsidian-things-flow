@@ -8,6 +8,8 @@ export interface ThingsPluginSettings {
 	onlyStatus: string;
 	openNotes: boolean;
 	fullPath: boolean;
+	areaLoc: 'none' | 'backlinks' | 'tags' | 'path';
+	areaNames: string;
 }
 
 export const DEFAULT_SETTINGS: Partial<ThingsPluginSettings> = {
@@ -17,6 +19,8 @@ export const DEFAULT_SETTINGS: Partial<ThingsPluginSettings> = {
 	onlyStatus: '',
 	openNotes: true,
 	fullPath: false,
+	areaLoc: 'none',
+	areaNames: '',
 };
 
 export class ThingsSettingTab extends PluginSettingTab {
@@ -31,11 +35,11 @@ export class ThingsSettingTab extends PluginSettingTab {
     	return [
     		{
 				name: 'Filtering: ignore tasks with these statuses',
-				desc: 'Leave empty to include all tasks. Enter task status symbols without separators. For example, enter "-x" to ignore Cancelled and Done tasks.',
+				desc: 'Leave empty to include all tasks. Enter task status symbols without separators.',
 				control: {
 					type: 'text' as const,
 					key: 'ignoreStatus',
-					placeholder: '',
+					placeholder: '"-x" to ignore Cancelled and Done tasks',
 				},
 			},{
 				name: 'How task filtering works',
@@ -46,19 +50,41 @@ export class ThingsSettingTab extends PluginSettingTab {
 				items: [
 					{
 						name: 'Change task status after copying to Things',
-						desc: 'Leave empty to keep the original status. Enter a single status symbol to apply to tasks after copying them to Things. For example, enter "/" to set the status to "In Progress".',
+						desc: 'Leave empty to keep the original status. Enter a single status symbol to apply to tasks after copying them to Things.',
 						control: {
 							type: 'text' as const,
 							key: 'toStatus',
-							placeholder: '',
+							placeholder: '"/" to set the status to "In Progress"',
 							validate: (value: string) => (value.length > 1)? 'Please enter a single status symbol.': undefined,
 						},
 					},{
 						name: 'Always use full paths in Obsidian URLs in Things notes',
-						desc: 'If enabled, Obsidian URLs will use the note\'s full path. Otherwise, the file basename will be used when it is unique. This setting may be overridden by the Path from the vault folder / current file option under New link format in Obsidian\'s Files and links settings.',
+						desc: 'If disabled, the file basename will be used when it is unique. This setting may be overridden by the Path from the vault folder / current file option under New link format in Obsidian\'s Files and links settings.',
 						control: {
 							type: 'toggle' as const,
 							key: 'fullPath',
+						},
+					},{
+						name: 'Where to look for Things area names',
+						desc: 'Choose where to look for area names when creating Things projects. Select "None" to skip area assignment.',
+						control: {
+							type: 'dropdown' as const,
+							key: 'areaLoc',
+							options:{
+								none: 'None',
+								backlinks: 'Backlinks',
+								tags: 'Tags',
+								path: 'File\'s full path', 
+							},
+						},
+					},{
+						name: 'Things area names to look for',
+						desc: 'Only applies when a location is selected above. Enter area names separated by semicolons, with no extra spaces around the semicolons. Case insensitive.',
+						control: {
+							type: 'text' as const,
+							key: 'areaNames',
+							placeholder: 'Work;Hobby & Interests;Personal',
+							disabled: () => this.plugin.settings.areaLoc === 'none',
 						},
 					}
 				],
@@ -75,11 +101,11 @@ export class ThingsSettingTab extends PluginSettingTab {
 						},
 					},{
 						name: 'Filtering: only update tasks with these statuses',
-						desc: 'Only applies when the restriction above is enabled. Enter status symbols without separators. For example, enter " /" to only update Open and In Progress tasks.',
+						desc: 'Only applies when the restriction above is enabled. Enter status symbols without separators.',
 						control: {
 							type: 'text' as const,
 							key: 'onlyStatus',
-							placeholder: '',
+							placeholder: '" /" to only update Open and In Progress tasks',
 							disabled: () => !this.plugin.settings.onlyMode,
 						},
 					},{
