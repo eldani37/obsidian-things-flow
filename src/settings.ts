@@ -2,25 +2,23 @@ import { App, PluginSettingTab } from 'obsidian';
 import ThingsPlugin from './main';
 
 export interface ThingsPluginSettings {
+	token: string;
 	ignoreStatus: string;
-	toStatus: string;
-	onlyMode: boolean;
-	onlyStatus: string;
-	openNotes: boolean;
 	fullPath: boolean;
 	areaLoc: 'none' | 'backlinks' | 'tags' | 'path';
 	areaNames: string;
+	openNotes: boolean;
+	deleteUnsynced: boolean;
 }
 
 export const DEFAULT_SETTINGS: Partial<ThingsPluginSettings> = {
+	token: '',
 	ignoreStatus: '',
-	toStatus: '',
-	onlyMode: false,
-	onlyStatus: '',
 	openNotes: true,
 	fullPath: false,
 	areaLoc: 'none',
 	areaNames: '',
+	deleteUnsynced: false,
 };
 
 export class ThingsSettingTab extends PluginSettingTab {
@@ -34,28 +32,24 @@ export class ThingsSettingTab extends PluginSettingTab {
 	getSettingDefinitions() {
     	return [
     		{
-				name: 'Filtering: ignore tasks with these statuses',
-				desc: 'Leave empty to include all tasks. Enter task status symbols without separators.',
-				control: {
-					type: 'text' as const,
-					key: 'ignoreStatus',
-					placeholder: '"-x" to ignore Cancelled and Done tasks',
-				},
-			},{
-				name: 'How task filtering works',
-				desc: 'Ignoring a subtask does not necessarily ignore its own subtasks, because all subtasks are flattened into independent checklist items; however, ignoring a top-level task also ignores all its subtasks.'
-			},{
 				type: 'group' as const,
 				heading: 'Syncing to Things',
 				items: [
 					{
-						name: 'Change task status after copying to Things',
-						desc: 'Leave empty to keep the original status. Enter a single status symbol to apply to tasks after copying them to Things.',
+						name: 'Authentication token for Things URL scheme',
+						desc: 'The token is essential for updating to-dos in Things. You can find it in the Things app under Settings > General > Things URLs.',
 						control: {
 							type: 'text' as const,
-							key: 'toStatus',
-							placeholder: '"/" to set the status to "In Progress"',
-							validate: (value: string) => (value.length > 1)? 'Please enter a single status symbol.': undefined,
+							key: 'token',
+							placeholder: 'Enter your token here',
+						},
+					},{
+						name: 'Task statuses to skip',
+						desc: 'Top-level tasks with these statuses and their subtasks will be ignored unless already marked as successfully synced, so no new to-dos will be created for them. Leave empty to include all tasks. Enter task status symbols without separators.',
+						control: {
+							type: 'text' as const,
+							key: 'ignoreStatus',
+							placeholder: '"-x" to ignore Cancelled and Done tasks',
 						},
 					},{
 						name: 'Always use full paths in Obsidian URLs in Things notes',
@@ -79,12 +73,12 @@ export class ThingsSettingTab extends PluginSettingTab {
 						},
 					},{
 						name: 'Things area names to look for',
-						desc: 'Only applies when a location is selected above. Enter area names separated by semicolons, with no extra spaces around the semicolons. Case insensitive.',
+						desc: 'Enter area names separated by semicolons, with no extra spaces around the semicolons. Case insensitive.',
 						control: {
 							type: 'text' as const,
 							key: 'areaNames',
 							placeholder: 'Work;Hobby & Interests;Personal',
-							disabled: () => this.plugin.settings.areaLoc === 'none',
+							visible: () => this.plugin.settings.areaLoc !== 'none',
 						},
 					}
 				],
@@ -93,20 +87,11 @@ export class ThingsSettingTab extends PluginSettingTab {
 				heading: 'Syncing from Things',
 				items: [
 					{
-						name: 'Restrict status updates',
-						desc: 'If enabled, only tasks with the statuses specified below will be updated when syncing task statuses from Things. All other tasks will be ignored.',
+						name: 'Delete tasks not included in the sync',
+						desc: 'If enabled, top-level tasks that are not included in the sync along with their subtasks will be deleted from the note. Subtasks not included in the sync will be deleted regardless of this setting.',
 						control: {
 							type: 'toggle' as const,
-							key: 'onlyMode',
-						},
-					},{
-						name: 'Filtering: only update tasks with these statuses',
-						desc: 'Only applies when the restriction above is enabled. Enter status symbols without separators.',
-						control: {
-							type: 'text' as const,
-							key: 'onlyStatus',
-							placeholder: '" /" to only update Open and In Progress tasks',
-							disabled: () => !this.plugin.settings.onlyMode,
+							key: 'deleteUnsynced',
 						},
 					},{
 						name: 'Open corresponding notes after syncing',
