@@ -248,9 +248,10 @@ function flushInCurrent(context: InContext) {
     if (context.current) {
         // flush current modification
         switch (context.current.action) {
+            // @ts-expect-error TS7029: intentional fall-through
             case 'move':
                 context.modifications.push(context.current.insertion);
-                /* falls through */
+                // falls through
             case 'delete':
                 context.modifications.push(context.current.deletion);
         }
@@ -598,6 +599,7 @@ export class SyncEngine {
                                     }
                                 }
                                 break;
+                            // @ts-expect-error TS7029: intentional fall-through
                             case 'move':
                                 if (listItem.task) {// checklist
                                     const status = getNewStatusForChecklist(listItem, content, context.current.clist);
@@ -616,7 +618,7 @@ export class SyncEngine {
                                         removeIndent(getLine(listItem.position, content, 'full'), context.current.indent)
                                     );
                                 }
-                                /* falls through */
+                                // falls through
                             case 'delete':
                                 context.current.deletion.end = listItem.position.end.offset+1;
                                 break;

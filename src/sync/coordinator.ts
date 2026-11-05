@@ -6,7 +6,7 @@ import type {OutData, OutCallbackData, InSync} from './validation';
 type SyncJob = {
     file: TFile;
     direction: 'outbound';
-    timeoutId: ReturnType<typeof window.setTimeout>;
+    timeoutId: number;
     expired: boolean;
     expiredAt?: number;
 }|{

@@ -196,7 +196,7 @@ function isProjectIn(
 ): value is ProjectIn {
     return (
         isRecord(value) &&
-        isNonEmptyString(value.title) &&
+        isString(value.title) &&
         isNonEmptyString(value.id) &&
         isString(value.notes)
     );
@@ -206,7 +206,7 @@ function isHeading(
 ): value is HeadingList {
     return (
         isRecord(value) &&
-        isNonEmptyString(value.title) &&
+        isString(value.title) &&
         isNonEmptyString(value.id)
     );
 }
@@ -215,10 +215,10 @@ function isTodoIn(
 ): value is TodoIn {
     return (
         isRecord(value) &&
-        isNonEmptyString(value.title) &&
+        isString(value.title) &&
         isNonEmptyString(value.id) &&
         isThingsStatus(value.status) &&
-        isNonEmptyString(value.hid) &&
+        isString(value.hid) &&
         isString(value.checklist)
     );
 }
