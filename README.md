@@ -27,7 +27,7 @@ $\dagger$ Headings created in Things are not automatically archived or deleted w
 ### Syncing to Things
 To sync the current note to Things, use the plugin command or ribbon action. This can either create a new project for it or update an existing one,
 
-The plugin uses an [Apple Shortcut]() during the process. Please make sure the shortcut is added to your device before syncing. 
+The plugin uses an [Apple Shortcut](https://www.icloud.com/shortcuts/858b963a09b842ca9a7f637bf4049826) during the process. Please make sure the shortcut is added to your device before syncing. 
 
 It adds some sync markers to the note:
  - One right below the title stores the Things project ID,
@@ -39,7 +39,7 @@ These markers are required for future syncs. Deleting a marker leaves the corres
 
 When updating a project, the shortcut asks if you want to delete Things to-dos that are not included in the current sync. If you confirm, then to-dos whose corresponding sync markers are not present in the note will be deleted. Checklist items (subtasks) deletion are synchronized regardless.
 ### Syncing from Things
-To sync from Things, select plugin-generated projects in Things and run this [Apple Shortcut](). 
+To sync from Things, select plugin-generated projects in Things and run this [Apple Shortcut](https://www.icloud.com/shortcuts/fa38b61ee76447629e610274109540f5). 
 
 Only tasks with sync markers and their subtasks will be modified or moved (and possibly deleted if you enable this option in Settings). Other parts of the note, including all the headings, will remain unchanged.
 
