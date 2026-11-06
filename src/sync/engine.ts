@@ -142,6 +142,7 @@ function updateOutContext(listItem: ListItemCache, content: string, ignoreStatus
     const titleLine = getLine(listItem.position, content, 'title');
     const id = findID(titleLine, tReg);
     if (!id && ignoreStatus.includes(listItem.task)) {// ignored
+        context.current = undefined;
         return;
     }
     updateHIndex(listItem.position.start.offset, context.hState);
@@ -189,8 +190,8 @@ function updateOutContext(listItem: ListItemCache, content: string, ignoreStatus
         context.output.todos.push(context.current.todo);
     }
 }
-function updateOutCurrentParent(listItem: ListItemCache, content: string, current: CurrentOut) {
-    if (!listItem.task) {
+function updateOutCurrentParent(listItem: ListItemCache, content: string, current?: CurrentOut) {
+    if (!listItem.task||!current) {
         return;
     }
     if (current.action === 'update') {
