@@ -534,7 +534,7 @@ export class SyncEngine {
                                 if (!clist.has(key)) {
                                     clist.set(key, []);
                                 }
-                                clist.get(key)!.push(cl);
+                                clist.get(key)!.push(cl[3]!);
                             }
                             for (const statuses of clist.values()) {
                                 statuses.reverse();

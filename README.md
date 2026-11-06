@@ -61,10 +61,7 @@ You can configure the plugin in Settings.
 - **Authentication token for Things URL scheme:** Required for updating Things projects. Without it, the plugin can still create projects and sync changes from Things back to Obsidian. Only syncing to existing Things projects will be affected 
 - **Delete tasks not included in the sync:** When enabled, to-dos deleted from Things wil also have their corresponding tasks deleted from Obsidian. Otherwise only their sync markers will be removed.
 ### Task status
-- **Task statuses to skip:** Top-level tasks with the specified statuses will be ignored if not already associated with a Things to-do.
-- **Change task status after copying to Things:** This will mark the tasks being synced to Things with the specified status.
-
-These options support custom task statuses. 
+- **Task statuses to skip:** Top-level tasks with the specified statuses will be ignored if not already associated with a Things to-do. Supports custom task statuses. 
 
 ### Identification
 - **Always use full paths in Obsidian URLs in Things notes:** Keep this disabled for convenience when moving notes between folders, if you don't expect to reuse note names. Otherwise enable it to avoid linking to the wrong note.
