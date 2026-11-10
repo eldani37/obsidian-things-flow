@@ -109,7 +109,7 @@ function infoFromHItems(hItems: HeadingCache[]): HeadingInfo[] {
 function buildIdIndexMap(headings: HeadingInfo[]): Map<string, number> {
     const idMap = new Map<string, number>();
     headings.forEach((hItem, index) => {
-        if (hItem.id) {
+        if (hItem.id!==undefined) {
             idMap.set(hItem.id, index);
         }
     });
@@ -245,6 +245,10 @@ function removeIndent(str: string, indent: number): string {
     }
     return str.replaceAll(getIndentRegex(indent), '');
 }
+function flushChecklist(clist: ChecklistMap, indent: number): string[] {
+    const space = '\t'.repeat(indent);
+    return Array.from(clist).flatMap(([title, statuses]) => statuses.map((status) => space+`\t- [${statusMD(status)}] ${title}\n`));
+}
 function flushInCurrent(context: InContext) {
     if (context.current) {
         // flush current modification
@@ -259,20 +263,15 @@ function flushInCurrent(context: InContext) {
         if (context.current.action !== 'delete' && context.current.clist.size > 0) {
             // flush the checklist of the previous top level todo
             // add the left checklist items to the note
-            for (const [title, statuses] of context.current.clist) {
-                for (const status of statuses) {
-                    const cl = `\t- [${statusMD(status)}] ${title}\n`;
-                    if (context.current.action === 'move') {
-                        context.current.insertion.content.push(cl);
-                    } else {
-                        context.modifications.push({
-                            type: 'new',
-                            pos: context.current.latestPos+1, 
-                            content: ['\t'.repeat(context.current.indent)+cl],
-                            hIndex: context.hState.hIndex
-                        });
-                    }
-                }
+            if (context.current.action === 'move') {
+                context.current.insertion.content.push(...flushChecklist(context.current.clist, 0));
+            } else {
+                context.modifications.push({
+                    type: 'new',
+                    pos: context.current.latestPos+1,
+                    content: flushChecklist(context.current.clist, context.current.indent),
+                    hIndex: context.hState.hIndex
+                });
             }
         }
         context.current = undefined;
@@ -630,7 +629,12 @@ export class SyncEngine {
             // add the left todos to the note
             context.input.todos.forEach((tTodo) => {
                 context.modifications.push(
-                    createTaskFromTodo(tTodo, context, undefined, '\n')
+                    createTaskFromTodo(tTodo, context, undefined, 
+                        tTodo.checklist===''?'\n' : '\n\t'+tTodo.checklist
+                            .split('\n')
+                            .map((line)=>line.slice(0,3)+statusMD(line[3]!)+line.slice(4))
+                            .join('\n\t')+'\n'
+                    )
                 );
             });
             return applyModifications(content, context.modifications);
